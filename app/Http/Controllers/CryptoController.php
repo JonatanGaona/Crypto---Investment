@@ -76,7 +76,6 @@ class CryptoController extends Controller
         $from = $request->query('from');
         $to = $request->query('to');
 
-        // Buscamos el historial filtrando por la moneda y el rango de fechas (Carbon para formatear)
         $history = PriceHistory::where('cryptocurrency_id', $cryptoId)
             ->whereBetween('recorded_at', [
                 Carbon::parse($from)->startOfDay(), 
@@ -85,7 +84,6 @@ class CryptoController extends Controller
             ->orderBy('recorded_at', 'asc')
             ->get();
 
-        // Formateamos la respuesta para que Chart.js la entienda fácil (X = Etiquetas de tiempo, Y = Precios)
         $labels = $history->map(function($item) {
             return Carbon::parse($item->recorded_at)->format('d/m H:i');
         });
