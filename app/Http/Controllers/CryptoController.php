@@ -69,4 +69,34 @@ class CryptoController extends Controller
 
         return response()->json($formattedData);
     }
+
+    public function getHistory(Request $request)
+    {
+        $cryptoId = $request->query('crypto_id');
+        $from = $request->query('from');
+        $to = $request->query('to');
+
+        // Buscamos el historial filtrando por la moneda y el rango de fechas (Carbon para formatear)
+        $history = PriceHistory::where('cryptocurrency_id', $cryptoId)
+            ->whereBetween('recorded_at', [
+                Carbon::parse($from)->startOfDay(), 
+                Carbon::parse($to)->endOfDay()
+            ])
+            ->orderBy('recorded_at', 'asc')
+            ->get();
+
+        // Formateamos la respuesta para que Chart.js la entienda fácil (X = Etiquetas de tiempo, Y = Precios)
+        $labels = $history->map(function($item) {
+            return Carbon::parse($item->recorded_at)->format('d/m H:i');
+        });
+
+        $prices = $history->map(function($item) {
+            return (float) $item->price;
+        });
+
+        return response()->json([
+            'labels' => $labels,
+            'prices' => $prices
+        ]);
+    }
 }

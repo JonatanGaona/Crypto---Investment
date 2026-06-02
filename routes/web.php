@@ -6,3 +6,5 @@ use App\Http\Controllers\CryptoController;
 Route::get('/', [CryptoController::class, 'index']);
 
 Route::get('/api/crypto/updates', [CryptoController::class, 'getUpdates']);
+
+Route::get('/api/crypto/history', [CryptoController::class, 'getHistory']);
