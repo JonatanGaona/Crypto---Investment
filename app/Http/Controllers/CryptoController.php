@@ -85,7 +85,7 @@ class CryptoController extends Controller
             ->get();
 
         $labels = $history->map(function($item) {
-            return Carbon::parse($item->recorded_at)->format('d/m H:i');
+            return \Carbon\Carbon::parse($item->recorded_at)->timezone('America/Bogota')->format('d/m H:i');
         });
 
         $prices = $history->map(function($item) {

@@ -232,19 +232,32 @@
             });
         }
 
-        function loadInitialChart() {
-            const mockLabels = ['09:00 AM', '09:15 AM', '09:30 AM', '09:45 AM', '10:00 AM'];
-            const mockPrices = [67200, 67250, 67180, 67310, 67450];
-            initChart(mockLabels, mockPrices);
+        async function loadRealChartData() {
+            const cryptoId = document.getElementById('crypto-select').value;
+            const from = document.getElementById('date-from').value;
+            const to = document.getElementById('date-to').value;
+
+            try {
+                const response = await fetch(`/api/crypto/history?crypto_id=${cryptoId}&from=${from}&to=${to}`);
+                const data = await response.json();
+
+                if (data.labels && data.labels.length > 0) {
+                    initChart(data.labels, data.prices);
+                } else {
+                    initChart(['Sin datos'], [0]);
+                }
+            } catch (error) {
+                console.error("Error al cargar gráfico inicial:", error);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchMarketData();
-            loadInitialChart();
-            
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date-from').value = today;
             document.getElementById('date-to').value = today;
+
+            fetchMarketData();
+            loadRealChartData();
         });
 
         document.getElementById('btn-filter').addEventListener('click', async () => {
