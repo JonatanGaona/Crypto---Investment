@@ -107,10 +107,6 @@
                         <div class="col-lg-4 col-md-12">
                             <label class="form-label small text-muted fw-semibold">Activo Digital</label>
                             <select class="form-select" id="crypto-select">
-                                <option value="1">Bitcoin (BTC)</option>
-                                <option value="2">Ethereum (ETH)</option>
-                                <option value="3">Binance Coin (BNB)</option>
-                                <option value="4">Solana (SOL)</option>
                             </select>
                         </div>
                         <div class="col-lg-3 col-md-6">
@@ -158,7 +154,11 @@
 
         function renderCryptoCards(cryptos) {
             const container = document.getElementById('crypto-cards-container');
+            const select = document.getElementById('crypto-select');
+            const currentSelection = select.value;
+
             container.innerHTML = '';
+            select.innerHTML = '';
 
             cryptos.forEach(crypto => {
                 const isPositive = crypto.change >= 0;
@@ -183,7 +183,13 @@
                         </div>
                     </div>
                 `;
+
+                select.innerHTML += `<option value="${crypto.id}">${crypto.name} (${crypto.symbol})</option>`;
             });
+
+            if (currentSelection) {
+                select.value = currentSelection;
+            }
         }
 
         setInterval(() => {
